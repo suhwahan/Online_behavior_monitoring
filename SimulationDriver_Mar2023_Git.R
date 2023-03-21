@@ -1,15 +1,12 @@
-##--| Author: Suhwa Han
+##--| Author: Suhwa Han (suhwa@utexas.edu)
 
 setwd("/Users/suhwahan/Git_project/JEM_Mar2023_Git")
 
 ##--| Sources & libraries ---
-source('source_Apr2022.R', echo=TRUE)
-source('CUSUM_observed_source_Apr2022.R')
-source('CUSUM_estimated_source_Apr2022.R')
-source('SGLRT_source_Apr2022.R')
-source('/Users/suhwahan/Library/CloudStorage/Box-Box/SuHwa Han/Response Time Simulation/RTM R Program/mmap_cfix.R', echo=TRUE)
-source('/Users/suhwahan/Library/CloudStorage/Box-Box/SuHwa Han/Response Time Simulation/RTM R Program/mmap_fsb_cfix.R', echo=TRUE)
-source("/Users/suhwahan/Library/CloudStorage/Box-Box/SuHwa Han/Response Time Simulation/RTM R Program/map.R")
+source('source.R', echo=TRUE)
+source('mmap_cfix.R', echo=TRUE)
+source('mmap_fsb_cfix.R', echo=TRUE)
+source("map.R")
 
 library(LNIRT)
 library(foreach)
