@@ -307,14 +307,12 @@ Sim_driver <- function(nitem, nexaminee, rho_item, rho_person, c_f, p_ab_p, c.pt
     # Calculate likelihood-ratio statistics with null data
     LR_null <- calcLR_SGLRT(resp=null_Data$response, rt=null_Data$rt, n_rf_s=n_rf_s,
                              ir_est_mat=ir_est_mat, rt_est_mat=rt_est_mat, mu_p_t=null_Data$mu_p, cov_p_t=null_Data$cov_p,
-                             sampling=sampling, dat_grp_ind=dat_grp_ind, null_ppars=null_Data$ppars, c.pt=c.pt,
-                             idx_ab_p=Ab_Data$idx_ab_p, idx_nab_p=Ab_Data$idx_nab_p, delta_th=delta_th, delta_tau=delta_tau)
+                             sampling=sampling)
     
     # Calculate likelihood-ratio statistics with data with aberrancy
     LR_ab <- calcLR_SGLRT(resp=Ab_Data$Ab_response, rt=Ab_Data$Ab_RT, n_rf_s=n_rf_s,
                            ir_est_mat=ir_est_mat, rt_est_mat=rt_est_mat, mu_p_t=null_Data$mu_p, cov_p_t=null_Data$cov_p,
-                           sampling=sampling, dat_grp_ind=dat_grp_ind, null_ppars=null_Data$ppars, c.pt=c.pt,
-                           idx_ab_p=Ab_Data$idx_ab_p, idx_nab_p=Ab_Data$idx_nab_p, delta_th=delta_th, delta_tau=delta_tau)
+                           sampling=sampling)
 
     # Extract the likelihood-ratio statistics
     LR_null_mat <- tmp_n <- LR_null$LR_mat 
