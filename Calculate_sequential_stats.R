@@ -290,7 +290,7 @@ calc_SGLRT <- function(resp, rt, n_rf_s, ir_est_mat, rt_est_mat, mu_p_t, cov_p_t
         } else if (sampling == "exclusive"){
           RG <- c((n_rf_s*j+1),(n_rf_s*j+n_rf_s)) # range of item indices within the item set at j
         }
-        f_rt_num <- rt_dfn(rt=rt[j,RG[1]:RG[2]], # Calculate the lognormal RT density given tau at j
+        f_rt_num <- rt_dfn(rt=rt[p,RG[1]:RG[2]], # Calculate the lognormal RT density given tau at j
                            Alp=rt_est_mat[RG[1]:RG[2], "alpha"], 
                            Bet=rt_est_mat[RG[1]:RG[2], "beta"], 
                            Tau=tau_1_mat[p,j])
@@ -298,7 +298,7 @@ calc_SGLRT <- function(resp, rt, n_rf_s, ir_est_mat, rt_est_mat, mu_p_t, cov_p_t
         pr <- irf_3pl_v(xi_ir=ir_est_mat[RG[1]:RG[2],], th=th_1_mat[p,j]) # IRF at the interim theta at j
         f_x_num <- pr^x*(1-pr)^(1-x)
         f_num <- prod(f_rt_num)*prod(f_x_num)
-        f_rt_den <- rt_dfn(rt=rt[j,RG[1]:RG[2]], # Calculate the lognormal RT density given the null tau
+        f_rt_den <- rt_dfn(rt=rt[p,RG[1]:RG[2]], # Calculate the lognormal RT density given the null tau
                            Alp=rt_est_mat[RG[1]:RG[2], "alpha"], 
                            Bet=rt_est_mat[RG[1]:RG[2], "beta"], 
                            Tau=tau_0_mat[p,j])
@@ -309,7 +309,7 @@ calc_SGLRT <- function(resp, rt, n_rf_s, ir_est_mat, rt_est_mat, mu_p_t, cov_p_t
       }
       LR_mat[p,] <- LR
     } 
-  return(list(LR_mat=LR_mat, st_eval=st_eval))
+  return(list(LR_mat=LR_mat))
 }
 
 ### ------------------------------------------------------------ ###
