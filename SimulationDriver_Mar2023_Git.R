@@ -11,8 +11,6 @@ source('mmap_fsb_cfix.R', echo=TRUE)
 source("map.R")
 
 library(LNIRT)
-library(foreach)
-library(doParallel)
 library(MASS)
 library(plyr)
 library(tidyverse)
