@@ -7,7 +7,7 @@ Eval_performance <- function (Proc, Res, CV, e_dt_pt=NULL, sampling=NULL, c.pt, 
   Nexaminee <- length(Res[,1])
   
   # Find a cell which exceeded CV ------------
-  dt_cht <- abs(Res) > abs(CV)  # LR has been set to be higher when the statistic favors H1
+  dt_cht <- Res > CV  # LR has been set to be higher when the statistic favors H1
   
   # matrix containing idx of people who were "detected" anywhere along the items (power+type1) and their detection point; 
   # 1st column=index; 2nd column=detection point  
