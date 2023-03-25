@@ -41,10 +41,10 @@ calcPw_SGLRT <- function (Proc, Res, CV, e_dt_pt=NULL, sampling, c.pt, n_rf_s, i
   } else if (Proc == "CUSUM_est" && !is.null(e_dt_pt)){
     st_eval = n_rf_s*2
     e_dt_pt = e_dt_pt
-  } else if (Proc == "SGLRT" && sampling = "exclusive" && !is.null(e_dt_pt)){
+  } else if (Proc == "SGLRT" && sampling == "exclusive" && !is.null(e_dt_pt)){
     st_eval = n_rf_s*2
     e_dt_pt = e_dt_pt
-  } else if (Proc == "SGLRT" && sampling = "ref_mov_fixed"){
+  } else if (Proc == "SGLRT" && sampling == "ref_mov_fixed"){
     st_eval = n_rf_+1
     e_dt_pt = c.pt-st_eval+1
   }
