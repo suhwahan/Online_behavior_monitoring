@@ -1,7 +1,7 @@
 ### Functions to conduct evaluations ----
 
 ###   Calculate power/type I error for SGLRT -------------------
-Eval_performance <- function (Proc, Res, CV, e_dt_pt=NULL, sampling, c.pt, n_rf_s, idx_ab_p){
+Eval_performance <- function (Proc, Res, CV, e_dt_pt=NULL, sampling=NULL, c.pt, n_rf_s, idx_ab_p){
   
   neval <- length(Res[1,])
   Nexaminee <- length(Res[,1])
