@@ -45,7 +45,7 @@ Eval_performance <- function (Proc, Res, CV, e_dt_pt=NULL, sampling=NULL, c.pt, 
     st_eval = n_rf_s*2
     e_dt_pt = e_dt_pt
   } else if (Proc == "SGLRT" && sampling == "ref_mov_fixed"){
-    st_eval = n_rf_+1
+    st_eval = n_rf_s+1
     e_dt_pt = c.pt-st_eval+1
   }
   
