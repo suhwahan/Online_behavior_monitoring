@@ -22,7 +22,7 @@ Sim_driver <- function(nitem, nexaminee, rho_item, rho_person, c_f, p_ab_p, c.pt
                        mu_a, var_a, mu_alp, var_alp,
                        ref_v_W_j, lambda_Wj=NULL,
                        ref_v_V_j, lambda_Vj=NULL,
-                       lambda_G=NULL, dat_grp_ind="grp",
+                       lambda_G=NULL,
                        lambda_G_excl=NULL){
   
   
@@ -115,8 +115,8 @@ Sim_driver <- function(nitem, nexaminee, rho_item, rho_person, c_f, p_ab_p, c.pt
       CV <- calc_CV(pct=.05, stats=CUSUM_Wj_null)
       
       ##--| Evaluate the performance (power, Type I, ARL)
-      res_CX_list[[l]] <- calcPw_CUSUM_observed(Res=CUSUM_Wj_ab, CV=CV, c.pt=c.pt, n_rf_s=n_rf_s, st_eval=n_rf_s+1, idx_ab_p=Ab_Data$idx_ab_p)
-
+      res_CX_list[[l]] <- Eval_performance(Proc="CUSUM_obs", Res=CUSUM_Wj_ab, CV=CV, 
+                                           c.pt=c.pt, n_rf_s=n_rf_s, idx_ab_p=Ab_Data$idx_ab_p)
     }
     
     # Collapse the result lists and store the results
@@ -147,8 +147,8 @@ Sim_driver <- function(nitem, nexaminee, rho_item, rho_person, c_f, p_ab_p, c.pt
         CV <- calc_CV(pct=.05, stats=Wj_null)
         
         ##--| Evaluate the performance (power, Type I, ARL) ---------
-        res_CX_W_list[[l]] <- calcPw_CUSUM_observed(Res=Wj_ab, CV=CV, c.pt=c.pt, n_rf_s=n_rf_s, st_eval=n_rf_s+1, idx_ab_p=Ab_Data$idx_ab_p)
-
+        res_CX_W_list[[l]] <- Eval_performance(Proc="CUSUM_obs", Res=Wj_ab, CV=CV, 
+                                               c.pt=c.pt, n_rf_s=n_rf_s, idx_ab_p=Ab_Data$idx_ab_p)
       }
     }
 
@@ -170,8 +170,7 @@ Sim_driver <- function(nitem, nexaminee, rho_item, rho_person, c_f, p_ab_p, c.pt
     # Calculate monitoring statistics with null data
     tmp_null <- calc_V_j_CUSUM_ref_fixed(resp=null_Data$response, rt=null_Data$rt, n_rf_s=n_rf_s,
                                          ir_est_mat=ir_est_mat, rt_est_mat=rt_est_mat,
-                                         mu_p_t=null_Data$mu_p, cov_p_t=null_Data$cov_p,
-                                         test_type = "two_samples")
+                                         mu_p_t=null_Data$mu_p, cov_p_t=null_Data$cov_p)
     
     V_j_mat_null <- tmp_null$V_j_mat 
     th_0_null <- tmp_null$th_0; tau_0_null <- tmp_null$tau_0
@@ -204,14 +203,15 @@ Sim_driver <- function(nitem, nexaminee, rho_item, rho_person, c_f, p_ab_p, c.pt
       CV <- calc_CV(pct=.05, stats=CUSUM_Vj_null)
       
       ##--| Evaluate the performance (power, Type I, ARL)
-      res_CE_list[[l]] <- calcPw_estimated_CUSUM(Res=CUSUM_Vj_ab, CV=CV, c.pt=c.pt, e_dt_pt=e_dt_pt, idx_ab_p=Ab_Data$idx_ab_p)
+      res_CE_list[[l]] <- Eval_performance(Proc="CUSUM_est", Res=CUSUM_Vj_ab, CV=CV, 
+                                           e_dt_pt=e_dt_pt, c.pt=c.pt, n_rf_s=n_rf_s, idx_ab_p=Ab_Data$idx_ab_p)
     }
 
     # Arrange and store the results ----------------------
     res_CE_list <- plyr::ldply(res_CE_list, data.frame)
     Res_w_fts[[f]]$CE <- res_CE_list
 
-    ##--| Weighted control chart that monitors latent trait variables  ----------
+    ##--| Weighted control chart that monitors latent trait variables ----------
     tmp_a <- V_j_mat_ab
     tmp_n <- V_j_mat_null
     
@@ -234,7 +234,8 @@ Sim_driver <- function(nitem, nexaminee, rho_item, rho_person, c_f, p_ab_p, c.pt
         CV <- calc_CV(pct=.05, stats=V_j_mat_null)
         
         ##--| Evaluate the performance (power, Type I, ARL) ---------
-        res_CE_W_list[[l]] <- calcPw_estimated_CUSUM(Res=V_j_mat_ab, CV=CV, c.pt=c.pt, e_dt_pt=e_dt_pt, idx_ab_p=Ab_Data$idx_ab_p)
+        res_CE_W_list[[l]] <- Eval_performance(Proc="CUSUM_est", Res=V_j_mat_ab, CV=CV, 
+                                               e_dt_pt=e_dt_pt, c.pt=c.pt, n_rf_s=n_rf_s, idx_ab_p=Ab_Data$idx_ab_p)
       }
     }
 
@@ -246,12 +247,12 @@ Sim_driver <- function(nitem, nexaminee, rho_item, rho_person, c_f, p_ab_p, c.pt
     sampling <- "ref_mov_fixed" # sliding door sampling with a fixed training data
     
     # Calculate likelihood-ratio statistics with null data
-    LR_null <- calcLR_SGLRT(resp=null_Data$response, rt=null_Data$rt, n_rf_s=n_rf_s,
+    LR_null <- calc_SGLRT(resp=null_Data$response, rt=null_Data$rt, n_rf_s=n_rf_s,
                              ir_est_mat=ir_est_mat, rt_est_mat=rt_est_mat, mu_p_t=null_Data$mu_p, cov_p_t=null_Data$cov_p,
                              sampling=sampling)
 
     # Calculate likelihood-ratio statistics with data with aberrancy
-    LR_ab <- calcLR_SGLRT(resp=Ab_Data$Ab_response, rt=Ab_Data$Ab_RT, n_rf_s=n_rf_s,
+    LR_ab <- calc_SGLRT(resp=Ab_Data$Ab_response, rt=Ab_Data$Ab_RT, n_rf_s=n_rf_s,
                            ir_est_mat=ir_est_mat, rt_est_mat=rt_est_mat, mu_p_t=null_Data$mu_p, cov_p_t=null_Data$cov_p,
                            sampling=sampling)
 
@@ -263,8 +264,8 @@ Sim_driver <- function(nitem, nexaminee, rho_item, rho_person, c_f, p_ab_p, c.pt
     CV <- calc_CV(pct=.05, stats=LR_null_mat)
     
     ##--| Evaluate the performance (power, Type I, ARL) -----------
-    res_G <- calcPw_SGLRT(Res=LR_ab_mat, CV=CV, e_dt_pt_excl=e_dt_pt, sampling=sampling,
-                                 c.pt=c.pt, st_eval=LR_ab$st_eval, idx_ab_p=Ab_Data$idx_ab_p)
+    res_G <- Eval_performance(Proc="SGLRT", Res=LR_ab_mat, CV=CV, sampling=sampling,
+                              c.pt=c.pt, n_rf_s=n_rf_s, idx_ab_p=Ab_Data$idx_ab_p)
     
     ##--| Arrange and store the results ---------------------------
     res_G <- cbind(" ", as.data.frame(res_G)); colnames(res_G) <- c(".id", names(res_G[2:ncol(res_G)]))
@@ -292,8 +293,8 @@ Sim_driver <- function(nitem, nexaminee, rho_item, rho_person, c_f, p_ab_p, c.pt
         CV <- calc_CV(pct=.05, stats=LR_null_mat)
         
         ##--| Evaluate the performance (power, Type I, ARL) ---------
-        res_G_W_list[[l]] <- calcPw_SGLRT(Res=LR_ab_mat, CV=CV, e_dt_pt_excl=e_dt_pt, sampling=sampling,
-                                          c.pt=c.pt, st_eval=LR_ab$st_eval, idx_ab_p=Ab_Data$idx_ab_p)
+        res_G_W_list[[l]] <- Eval_performance(Proc="SGLRT", Res=LR_ab_mat, CV=CV, sampling=sampling,
+                                              c.pt=c.pt, n_rf_s=n_rf_s, idx_ab_p=Ab_Data$idx_ab_p)
       }
     }
     
@@ -305,12 +306,12 @@ Sim_driver <- function(nitem, nexaminee, rho_item, rho_person, c_f, p_ab_p, c.pt
     sampling <- "exclusive" # exclusive item-batch sampling with a fixed training data
     
     # Calculate likelihood-ratio statistics with null data
-    LR_null <- calcLR_SGLRT(resp=null_Data$response, rt=null_Data$rt, n_rf_s=n_rf_s,
+    LR_null <- calc_SGLRT(resp=null_Data$response, rt=null_Data$rt, n_rf_s=n_rf_s,
                              ir_est_mat=ir_est_mat, rt_est_mat=rt_est_mat, mu_p_t=null_Data$mu_p, cov_p_t=null_Data$cov_p,
                              sampling=sampling)
     
     # Calculate likelihood-ratio statistics with data with aberrancy
-    LR_ab <- calcLR_SGLRT(resp=Ab_Data$Ab_response, rt=Ab_Data$Ab_RT, n_rf_s=n_rf_s,
+    LR_ab <- calc_SGLRT(resp=Ab_Data$Ab_response, rt=Ab_Data$Ab_RT, n_rf_s=n_rf_s,
                            ir_est_mat=ir_est_mat, rt_est_mat=rt_est_mat, mu_p_t=null_Data$mu_p, cov_p_t=null_Data$cov_p,
                            sampling=sampling)
 
@@ -322,8 +323,8 @@ Sim_driver <- function(nitem, nexaminee, rho_item, rho_person, c_f, p_ab_p, c.pt
     CV <- calc_CV(pct=.05, stats=LR_null_mat)
     
     ##--| Evaluate the performance (power, Type I, ARL) -----------
-    res_G_excl <- calcPw_SGLRT(Res=LR_ab_mat, CV=CV, e_dt_pt_excl=e_dt_pt, sampling=sampling,
-                                      c.pt=c.pt, st_eval=LR_ab$st_eval, idx_ab_p=Ab_Data$idx_ab_p)
+    res_G_excl <- Eval_performance(Proc="SGLRT", Res=LR_ab_mat, CV=CV, e_dt_pt=e_dt_pt, sampling=sampling,
+                                      c.pt=c.pt, n_rf_s=n_rf_s, idx_ab_p=Ab_Data$idx_ab_p)
 
     ##--| Arrange and store the results ---------------------------
     res_G_excl <- cbind(" ", as.data.frame(res_G_excl));
@@ -348,8 +349,8 @@ Sim_driver <- function(nitem, nexaminee, rho_item, rho_person, c_f, p_ab_p, c.pt
         CV <- calc_CV(pct=.05, stats=LR_null_mat)
         
         ##--| Evaluate the performance (power, Type I, ARL) ---------
-        res_G_W_excl_list[[l]] <- calcPw_SGLRT(Res=LR_ab_mat, CV=CV, e_dt_pt_excl=e_dt_pt, sampling=sampling,
-                                               c.pt=c.pt, st_eval=LR_ab$st_eval, idx_ab_p=Ab_Data$idx_ab_p)
+        res_G_W_excl_list[[l]] <- Eval_performance(Proc="SGLRT", Res=LR_ab_mat, CV=CV, e_dt_pt=e_dt_pt, sampling=sampling,
+                                                   c.pt=c.pt, n_rf_s=n_rf_s, idx_ab_p=Ab_Data$idx_ab_p)
       }
     }
 
