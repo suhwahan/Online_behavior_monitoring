@@ -1,10 +1,8 @@
 ##--| Author: Suhwa Han (suhwa@utexas.edu)
 
-setwd("/Users/suhwahan/Git_project/JEM_Mar2023_Git")
-
 ##--| Sources & libraries ---
 source('Data generation.R', echo=TRUE)
-source('Calculate_sequential_stats.R', echo=TRUE)
+source('Calculate sequential_stats.R', echo=TRUE)
 source('Evaluation.R', echo=TRUE)
 source('mmap_cfix.R', echo=TRUE)
 source('mmap_fsb_cfix.R', echo=TRUE)
